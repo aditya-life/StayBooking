@@ -22,9 +22,9 @@ const reviewRouter = require('./routes/review.js');
 const userRouter = require('./routes/user.js');
 const searchRouter = require('./routes/search.js');
 
-// const MONGO_URL = 'mongodb://127.0.0.1:27017/wanderlust';
-
-const dbUrl = process.env.ATLASDB_URL;
+// Fallback to local MongoDB if ATLASDB_URL is not set
+const dbUrl = process.env.ATLASDB_URL || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/StayBooking';
+const secret = process.env.SECRET || 'devSessionSecretKeyStayBooking';
 
 main().then(() => {
   console.log("Database connected successfully");
@@ -48,18 +48,18 @@ app.engine('ejs', ejsMate);
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   crypto: {
-    secret: process.env.SECRET,
+    secret: secret,
   },
   touchAfter: 24 * 3600,
 });
 
-store.on("error", () => {
+store.on("error", (err) => {
   console.log("Error in mongo session store", err);
 });
 
 const sessionOptions = {
   store,
-  secret: process.env.SECRET,
+  secret: secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -93,9 +93,9 @@ app.use((req, res, next) => {
   next();
 });
 
-
-app.use("/listings", listingRouter);
+// Search route must be mounted BEFORE /listings so /listings/:id doesn't intercept it
 app.use("/listings/search", searchRouter);
+app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 

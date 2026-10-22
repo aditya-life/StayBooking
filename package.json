@@ -2,16 +2,14 @@
   "engines": {
     "node": "22.14.0"
   },
-  "name": "majorpro",
+  "name": "staybooking",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Full-stack MVC accommodation and rental booking web application inspired by Airbnb, featuring authentication, reviews, geocoding maps, and Cloudinary media storage.",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
-  "keywords": [],
-  "author": "Aditya Kumar",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "cloudinary": "^2.7.0",
     "connect-flash": "^0.1.1",
